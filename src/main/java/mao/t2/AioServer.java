@@ -1,5 +1,12 @@
 package mao.t2;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+
+import java.net.InetSocketAddress;
+import java.nio.channels.AsynchronousServerSocketChannel;
+import java.util.concurrent.locks.LockSupport;
+
 /**
  * Project name(项目名称)：Netty_AIO
  * Package(包名): mao.t2
@@ -13,7 +20,18 @@ package mao.t2;
  * Description(描述)： 无
  */
 
+@Slf4j
 public class AioServer
 {
+    @SneakyThrows
+    public static void main(String[] args)
+    {
+        AsynchronousServerSocketChannel asynchronousServerSocketChannel = AsynchronousServerSocketChannel.open();
+        asynchronousServerSocketChannel.bind(new InetSocketAddress(8080));
+        asynchronousServerSocketChannel.accept(null, new AcceptHandler(asynchronousServerSocketChannel));
+        log.debug("注册服务");
 
+        //因为是异步，所以要阻塞
+        LockSupport.park();
+    }
 }
